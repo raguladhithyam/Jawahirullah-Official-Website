@@ -121,7 +121,7 @@ const HeroSection: React.FC = () => {
             <div className="relative bg-card rounded-2xl shadow-floating overflow-hidden">
               <div className="aspect-video relative">
                 <Image
-                  src="https://static.wixstatic.com/media/c5ef35_0d2ae7cce69342c1964085639e6c47d8~mv2.png"
+                  src="/assets/images/jawahir.png"
                   alt="Dr. MH Jawahirullah delivering a speech"
                   className="w-full h-full object-cover"
                 />

@@ -95,7 +95,7 @@ const Header: React.FC<HeaderProps> = () => {
     >
       <div className="w-10 h-10 rounded-lg overflow-hidden">
         <img 
-          src="https://static.wixstatic.com/media/c5ef35_0d2ae7cce69342c1964085639e6c47d8~mv2.png"
+          src="/assets/images/jawahir.png"
           alt="Dr. Jawahirullah"
           className="w-full h-full object-cover"
         />

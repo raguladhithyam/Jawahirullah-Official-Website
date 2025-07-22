@@ -91,7 +91,7 @@ const Footer: React.FC = () => {
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-12 h-12 rounded-lg overflow-hidden">
                 <img 
-                  src="https://static.wixstatic.com/media/c5ef35_0d2ae7cce69342c1964085639e6c47d8~mv2.png"
+                  src="/assets/images/jawahir.png"
                   alt="Dr. Jawahirullah"
                   className="w-full h-full object-cover"
                 />

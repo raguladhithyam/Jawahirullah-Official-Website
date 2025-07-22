@@ -209,7 +209,7 @@ const About: React.FC = () => {
               <div className="relative">
                 <div className="aspect-square rounded-2xl overflow-hidden shadow-floating">
                   <Image
-                    src="https://static.wixstatic.com/media/c5ef35_0d2ae7cce69342c1964085639e6c47d8~mv2.png"
+                    src="/assets/images/jawahir.png"
                     alt="Dr. MH Jawahirullah"
                     className="w-full h-full object-cover"
                   />
