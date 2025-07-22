@@ -6,7 +6,7 @@ import Button from '@/components/ui/Button';
 
 const HeroSection: React.FC = () => {
   const [currentLanguage, setCurrentLanguage] = useState<'en' | 'ta'>('en');
-  const [isPlaying, setIsPlaying] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('preferred-language') as 'en' | 'ta' || 'en';
@@ -127,7 +127,7 @@ const HeroSection: React.FC = () => {
                 />
                 
                 {/* Play Button Overlay */}
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                {/* <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                   <button
                     onClick={() => setIsPlaying(!isPlaying)}
                     className="w-20 h-20 bg-primary/90 hover:bg-primary rounded-full flex items-center justify-center transition-smooth hover:scale-105"
@@ -138,10 +138,10 @@ const HeroSection: React.FC = () => {
                       className="text-primary-foreground ml-1" 
                     />
                   </button>
-                </div>
+                </div> */}
 
                 {/* Video Info Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                {/* <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
                   <div className="text-white">
                     <h3 className="font-headline text-lg font-semibold mb-2">
                       {currentLanguage === 'en' ?'Vision for Tamil Nadu Development' :'தமிழ்நாடு வளர்ச்சிக்கான பார்வை'
@@ -158,12 +158,12 @@ const HeroSection: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 
             {/* Floating Achievement Card */}
-            <div className="absolute -bottom-6 -right-6 bg-card rounded-xl shadow-elevated p-4 border">
+            {/* <div className="absolute -bottom-6 -right-6 bg-card rounded-xl shadow-elevated p-4 border">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                   <Icon name="Award" size={24} className="text-primary" />
@@ -177,7 +177,7 @@ const HeroSection: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
