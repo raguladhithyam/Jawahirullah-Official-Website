@@ -208,7 +208,7 @@ const Footer: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={content.emailPlaceholder}
-                  className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-lg font-body text-sm placeholder-primary-foreground/60 focus:outline-none focus:border-primary-foreground/40 transition-smooth"
+                  className="w-full px-4 py-3 bg-primary-foreground/10 border border-primary-foreground/20 rounded-lg font-body text-sm text-black placeholder-primary-foreground/60 focus:outline-none focus:border-primary-foreground/40 transition-smooth"
                   required
                 />
               </div>
