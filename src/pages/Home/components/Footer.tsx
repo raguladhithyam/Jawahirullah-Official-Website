@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '@/components/AppIcon';
 import Button from '@/components/ui/Button';
+import { FirebaseService } from '@/services/firebase';
 
 const Footer: React.FC = () => {
   const [currentLanguage, setCurrentLanguage] = useState<'en' | 'ta'>('en');
@@ -76,9 +77,26 @@ const Footer: React.FC = () => {
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle newsletter subscription
-    console.log('Newsletter subscription:', email);
-    setEmail('');
+    
+    if (!email.trim()) return;
+    
+    // Save to Firebase
+    const saveSubscription = async () => {
+      try {
+        await FirebaseService.create('newsletter_subscriptions', {
+          email: email.trim(),
+          status: 'active',
+          subscribedAt: new Date()
+        });
+        setEmail('');
+        // You could add a success toast here
+      } catch (error) {
+        console.error('Error saving subscription:', error);
+        // You could add an error toast here
+      }
+    };
+    
+    saveSubscription();
   };
 
   return (

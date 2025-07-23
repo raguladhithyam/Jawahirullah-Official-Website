@@ -1,18 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useTestimonials } from '@/hooks/useFirebase';
+import { Testimonial } from '@/types';
 import Icon from '@/components/AppIcon';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import ImageUpload from '@/components/ui/ImageUpload';
 import { useForm } from 'react-hook-form';
-
-interface Testimonial {
-  id: string;
-  name: string;
-  designation: string;
-  photo: string;
-  content: string;
-  createdAt: Date;
-}
 
 interface TestimonialFormData {
   name: string;
@@ -21,38 +14,13 @@ interface TestimonialFormData {
 }
 
 const TestimonialManager: React.FC = () => {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data: testimonials, loading, error, create, update, delete: deleteTestimonial } = useTestimonials();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   const [photoUrl, setPhotoUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<TestimonialFormData>();
-
-  // Mock data for now - replace with actual Firebase integration
-  useEffect(() => {
-    const mockTestimonials: Testimonial[] = [
-      {
-        id: '1',
-        name: 'Priya Krishnamurthy',
-        designation: 'Small Business Owner, Chennai',
-        photo: 'https://randomuser.me/api/portraits/women/32.jpg',
-        content: 'Dr. Jawahirullah\'s policies on digital governance have transformed how we interact with government services.',
-        createdAt: new Date('2024-01-15')
-      },
-      {
-        id: '2',
-        name: 'Prof. Rajesh Kumar',
-        designation: 'Political Science, University of Madras',
-        photo: 'https://randomuser.me/api/portraits/men/45.jpg',
-        content: 'His scholarly approach to politics brings much-needed intellectual rigor to contemporary political discourse.',
-        createdAt: new Date('2024-01-20')
-      }
-    ];
-    setTestimonials(mockTestimonials);
-  }, []);
 
   const handleEdit = (testimonial: Testimonial) => {
     setEditingTestimonial(testimonial);
@@ -78,17 +46,15 @@ const TestimonialManager: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const testimonialData: Testimonial = {
-        id: editingTestimonial?.id || Date.now().toString(),
+      const testimonialData = {
         ...data,
-        photo: photoUrl,
-        createdAt: editingTestimonial?.createdAt || new Date()
+        photo: photoUrl
       };
 
       if (editingTestimonial) {
-        setTestimonials(testimonials.map(t => t.id === editingTestimonial.id ? testimonialData : t));
+        await update(editingTestimonial.id, testimonialData);
       } else {
-        setTestimonials([...testimonials, testimonialData]);
+        await create(testimonialData);
       }
 
       setIsModalOpen(false);
@@ -103,7 +69,7 @@ const TestimonialManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this testimonial?')) {
-      setTestimonials(testimonials.filter(t => t.id !== id));
+      await deleteTestimonial(id);
     }
   };
 
@@ -144,57 +110,64 @@ const TestimonialManager: React.FC = () => {
 
       {/* Testimonials Table */}
       <div className="bg-card rounded-xl shadow-elevated overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-muted/30">
-              <tr>
-                <th className="px-6 py-4 text-left font-body font-semibold text-primary">Photo</th>
-                <th className="px-6 py-4 text-left font-body font-semibold text-primary">Name</th>
-                <th className="px-6 py-4 text-left font-body font-semibold text-primary">Designation</th>
-                <th className="px-6 py-4 text-left font-body font-semibold text-primary">Content</th>
-                <th className="px-6 py-4 text-left font-body font-semibold text-primary">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {testimonials.map((testimonial) => (
-                <tr key={testimonial.id} className="hover:bg-muted/20">
-                  <td className="px-6 py-4">
-                    <img
-                      src={testimonial.photo}
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="font-body font-medium text-primary">{testimonial.name}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="font-body text-text-secondary">{testimonial.designation}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="font-body text-text-secondary truncate max-w-xs">{testimonial.content}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        iconName="Edit"
-                        onClick={() => handleEdit(testimonial)}
-                      />
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        iconName="Trash2"
-                        onClick={() => handleDelete(testimonial.id)}
-                      />
-                    </div>
-                  </td>
+        {testimonials.length === 0 ? (
+          <div className="text-center py-12">
+            <Icon name="Quote" size={48} className="text-text-secondary mx-auto mb-4" />
+            <p className="font-body text-text-secondary">No testimonials found</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-muted/30">
+                <tr>
+                  <th className="px-6 py-4 text-left font-body font-semibold text-primary">Photo</th>
+                  <th className="px-6 py-4 text-left font-body font-semibold text-primary">Name</th>
+                  <th className="px-6 py-4 text-left font-body font-semibold text-primary">Designation</th>
+                  <th className="px-6 py-4 text-left font-body font-semibold text-primary">Content</th>
+                  <th className="px-6 py-4 text-left font-body font-semibold text-primary">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {testimonials.map((testimonial) => (
+                  <tr key={testimonial.id} className="hover:bg-muted/20">
+                    <td className="px-6 py-4">
+                      <img
+                        src={testimonial.photo}
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="font-body font-medium text-primary">{testimonial.name}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="font-body text-text-secondary">{testimonial.designation}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="font-body text-text-secondary truncate max-w-xs">{testimonial.content}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          iconName="Edit"
+                          onClick={() => handleEdit(testimonial)}
+                        />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          iconName="Trash2"
+                          onClick={() => handleDelete(testimonial.id)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Add/Edit Modal */}
