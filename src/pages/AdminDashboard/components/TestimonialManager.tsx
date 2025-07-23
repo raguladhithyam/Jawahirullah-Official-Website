@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import ImageUpload from '@/components/ui/ImageUpload';
 import { useForm } from 'react-hook-form';
+import { showToast } from '@/components/ui/Toast';
 
 interface TestimonialFormData {
   name: string;
@@ -53,8 +54,10 @@ const TestimonialManager: React.FC = () => {
 
       if (editingTestimonial) {
         await update(editingTestimonial.id, testimonialData);
+        showToast.success('Testimonial updated successfully!');
       } else {
         await create(testimonialData);
+        showToast.success('Testimonial added successfully!');
       }
 
       setIsModalOpen(false);
@@ -62,6 +65,7 @@ const TestimonialManager: React.FC = () => {
       setPhotoUrl('');
     } catch (error) {
       console.error('Error saving testimonial:', error);
+      showToast.error('Failed to save testimonial. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -69,7 +73,13 @@ const TestimonialManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this testimonial?')) {
-      await deleteTestimonial(id);
+      try {
+        await deleteTestimonial(id);
+        showToast.success('Testimonial deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting testimonial:', error);
+        showToast.error('Failed to delete testimonial. Please try again.');
+      }
     }
   };
 

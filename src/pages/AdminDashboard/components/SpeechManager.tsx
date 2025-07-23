@@ -7,6 +7,7 @@ import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import ImageUpload from '@/components/ui/ImageUpload';
 import { useForm } from 'react-hook-form';
+import { showToast } from '@/components/ui/Toast';
 
 interface SpeechFormData {
   title: string;
@@ -58,8 +59,10 @@ const SpeechManager: React.FC = () => {
 
       if (editingSpeech) {
         await update(editingSpeech.id, speechData);
+        showToast.success('Speech updated successfully!');
       } else {
         await create(speechData);
+        showToast.success('Speech added successfully!');
       }
 
       setIsModalOpen(false);
@@ -67,6 +70,7 @@ const SpeechManager: React.FC = () => {
       setThumbnailUrl('');
     } catch (error) {
       console.error('Error saving speech:', error);
+      showToast.error('Failed to save speech. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -74,7 +78,13 @@ const SpeechManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this speech?')) {
-      await deleteSpeech(id);
+      try {
+        await deleteSpeech(id);
+        showToast.success('Speech deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting speech:', error);
+        showToast.error('Failed to delete speech. Please try again.');
+      }
     }
   };
 

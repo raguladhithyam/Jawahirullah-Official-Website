@@ -4,6 +4,7 @@ import { ContactMessage } from '@/types';
 import Icon from '@/components/AppIcon';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
+import { showToast } from '@/components/ui/Toast';
 
 const ContactManager: React.FC = () => {
   const { data: contacts, loading, error, update, delete: deleteContact } = useContactMessages();
@@ -24,7 +25,13 @@ const ContactManager: React.FC = () => {
     : contacts.filter(contact => contact.status === filterStatus);
 
   const handleStatusChange = async (contactId: string, newStatus: string) => {
-    await update(contactId, { status: newStatus });
+    try {
+      await update(contactId, { status: newStatus });
+      showToast.success('Message status updated successfully!');
+    } catch (error) {
+      console.error('Error updating message status:', error);
+      showToast.error('Failed to update message status. Please try again.');
+    }
   };
 
   const handleReply = async (contactId: string) => {
@@ -40,8 +47,10 @@ const ContactManager: React.FC = () => {
       });
       setReplyMessage('');
       setSelectedContact(null);
+      showToast.success('Reply sent successfully!');
     } catch (error) {
       console.error('Error sending reply:', error);
+      showToast.error('Failed to send reply. Please try again.');
     } finally {
       setIsReplying(false);
     }
@@ -49,7 +58,13 @@ const ContactManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this message?')) {
-      await deleteContact(id);
+      try {
+        await deleteContact(id);
+        showToast.success('Message deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting message:', error);
+        showToast.error('Failed to delete message. Please try again.');
+      }
     }
   };
 

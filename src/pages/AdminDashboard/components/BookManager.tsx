@@ -7,6 +7,7 @@ import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import ImageUpload from '@/components/ui/ImageUpload';
 import { useForm } from 'react-hook-form';
+import { showToast } from '@/components/ui/Toast';
 
 interface BookFormData {
   title: string;
@@ -67,8 +68,10 @@ const BookManager: React.FC = () => {
 
       if (editingBook) {
         await update(editingBook.id, bookData);
+        showToast.success('Book updated successfully!');
       } else {
         await create(bookData);
+        showToast.success('Book added successfully!');
       }
 
       setIsModalOpen(false);
@@ -76,6 +79,7 @@ const BookManager: React.FC = () => {
       setCoverImageUrl('');
     } catch (error) {
       console.error('Error saving book:', error);
+      showToast.error('Failed to save book. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -83,7 +87,13 @@ const BookManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this book?')) {
-      await deleteBook(id);
+      try {
+        await deleteBook(id);
+        showToast.success('Book deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting book:', error);
+        showToast.error('Failed to delete book. Please try again.');
+      }
     }
   };
 

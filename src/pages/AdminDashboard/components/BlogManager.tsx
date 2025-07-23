@@ -7,6 +7,7 @@ import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import ImageUpload from '@/components/ui/ImageUpload';
 import { useForm } from 'react-hook-form';
+import { showToast } from '@/components/ui/Toast';
 
 interface BlogFormData {
   title: string;
@@ -72,8 +73,10 @@ const BlogManager: React.FC = () => {
 
       if (editingBlog) {
         await update(editingBlog.id, blogData);
+        showToast.success('Blog post updated successfully!');
       } else {
         await create(blogData);
+        showToast.success('Blog post added successfully!');
       }
 
       setIsModalOpen(false);
@@ -81,6 +84,7 @@ const BlogManager: React.FC = () => {
       setFeaturedImageUrl('');
     } catch (error) {
       console.error('Error saving blog:', error);
+      showToast.error('Failed to save blog post. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +92,13 @@ const BlogManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this blog post?')) {
-      await deleteBlog(id);
+      try {
+        await deleteBlog(id);
+        showToast.success('Blog post deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting blog post:', error);
+        showToast.error('Failed to delete blog post. Please try again.');
+      }
     }
   };
 

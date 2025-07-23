@@ -3,8 +3,8 @@ import { useUpdates } from '@/hooks/useFirebase';
 import { Update } from '@/types';
 import Icon from '@/components/AppIcon';
 import Button from '@/components/ui/Button';
-// import Input from '@/components/ui/Input';
 import { useForm } from 'react-hook-form';
+import { showToast } from '@/components/ui/Toast';
 
 interface UpdateFormData {
   type: 'announcement' | 'achievement' | 'event' | 'media' | 'policy';
@@ -53,14 +53,17 @@ const UpdatesManager: React.FC = () => {
 
       if (editingUpdate) {
         await updateItem(editingUpdate.id, updateData);
+        showToast.success('Update edited successfully!');
       } else {
         await create(updateData);
+        showToast.success('Update added successfully!');
       }
 
       setIsModalOpen(false);
       reset();
     } catch (error) {
       console.error('Error saving update:', error);
+      showToast.error('Failed to save update. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -68,7 +71,13 @@ const UpdatesManager: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this update?')) {
-      await deleteUpdate(id);
+      try {
+        await deleteUpdate(id);
+        showToast.success('Update deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting update:', error);
+        showToast.error('Failed to delete update. Please try again.');
+      }
     }
   };
 

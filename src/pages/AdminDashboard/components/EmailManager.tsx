@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FirebaseService, COLLECTIONS } from '@/services/firebase';
 import Icon from '@/components/AppIcon';
 import Button from '@/components/ui/Button';
+import { showToast } from '@/components/ui/Toast';
 
 interface SubscriptionEmail {
   id: string;
@@ -41,9 +42,11 @@ const EmailManager: React.FC = () => {
       try {
         await FirebaseService.delete('newsletter_subscriptions', id);
         setEmails(emails.filter(email => email.id !== id));
+        showToast.success('Email subscription deleted successfully!');
       } catch (err) {
         setError('Failed to delete email subscription');
         console.error('Error deleting email:', err);
+        showToast.error('Failed to delete email subscription. Please try again.');
       }
     }
   };
@@ -54,9 +57,11 @@ const EmailManager: React.FC = () => {
       setEmails(emails.map(email => 
         email.id === id ? { ...email, status: newStatus } : email
       ));
+      showToast.success('Email status updated successfully!');
     } catch (err) {
       setError('Failed to update email status');
       console.error('Error updating email status:', err);
+      showToast.error('Failed to update email status. Please try again.');
     }
   };
 
