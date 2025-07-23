@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Icon from '@/components/AppIcon';
 import Button from '@/components/ui/Button';
 import { FirebaseService } from '@/services/firebase';
+import { showToast } from '@/components/ui/Toast';
 
 const Footer: React.FC = () => {
   const [currentLanguage, setCurrentLanguage] = useState<'en' | 'ta'>('en');
@@ -83,16 +84,25 @@ const Footer: React.FC = () => {
     // Save to Firebase
     const saveSubscription = async () => {
       try {
+        const now = new Date();
         await FirebaseService.create('newsletter_subscriptions', {
           email: email.trim(),
           status: 'active',
-          subscribedAt: new Date()
+          subscribedAt: now
         });
         setEmail('');
-        // You could add a success toast here
+        showToast.success(
+          currentLanguage === 'en' 
+            ? 'Successfully subscribed to newsletter!' 
+            : 'செய்திமடலுக்கு வெற்றிகரமாக சந்தா செலுத்தப்பட்டது!'
+        );
       } catch (error) {
         console.error('Error saving subscription:', error);
-        // You could add an error toast here
+        showToast.error(
+          currentLanguage === 'en' 
+            ? 'Failed to subscribe. Please try again.' 
+            : 'சந்தா செலுத்த முடியவில்லை. மீண்டும் முயற்சிக்கவும்.'
+        );
       }
     };
     

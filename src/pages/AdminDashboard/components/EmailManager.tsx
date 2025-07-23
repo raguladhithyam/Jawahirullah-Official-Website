@@ -166,7 +166,18 @@ const EmailManager: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-body text-text-secondary text-sm">
-                        {new Date(email.subscribedAt).toLocaleDateString()}
+                        {(() => {
+                          let dateObj = email.subscribedAt;
+                          // Handle Firestore Timestamp
+                          if (dateObj && typeof dateObj === 'object' && typeof dateObj.toDate === 'function') {
+                            dateObj = dateObj.toDate();
+                          } else if (typeof dateObj === 'string' || typeof dateObj === 'number') {
+                            dateObj = new Date(dateObj);
+                          }
+                          return dateObj instanceof Date && !isNaN(dateObj.getTime())
+                            ? dateObj.toLocaleDateString()
+                            : 'Invalid Date';
+                        })()}
                       </p>
                     </td>
                     <td className="px-6 py-4">

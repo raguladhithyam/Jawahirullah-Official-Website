@@ -4,6 +4,7 @@ import App from "./App";
 import "@/styles/tailwind.css";
 import "@/styles/index.css";
 import { HelmetProvider } from 'react-helmet-async';
+import ToastProvider from '@/components/ui/Toast';
 
 const container = document.getElementById("root");
 if (!container) {
@@ -15,6 +16,7 @@ root.render(
   <React.StrictMode>
     <HelmetProvider>
       <App />
+      <ToastProvider />
     </HelmetProvider>
   </React.StrictMode>
 );
